@@ -227,6 +227,9 @@ unsafe extern "C" fn webview_new(
         );
     }
 
+    configure_transparency(window);
+    configure_transparency(webview);
+
     if visible != 0 {
         gtk_widget_show_all(window);
     }
@@ -249,6 +252,35 @@ unsafe extern "C" fn webview_new(
     );
 
     w
+}
+
+unsafe fn configure_transparency(c: *mut GtkWidget) {
+    let visual = gdk_sys::gdk_screen_get_rgba_visual(gtk_widget_get_screen(c));
+    gtk_widget_set_visual(c, visual);
+
+    let transparent = GdkRGBA {
+        red: 0.0,
+        green: 0.0,
+        blue: 0.0,
+        alpha: 0.0,
+    };
+
+    let ptr: *const GdkRGBA = &transparent;
+
+    gtk_widget_override_background_color(c, GTK_STATE_FLAG_NORMAL, ptr);
+    gtk_widget_override_background_color(c, GTK_STATE_FLAG_ACTIVE, ptr);
+    gtk_widget_override_background_color(c, GTK_STATE_FLAG_PRELIGHT, ptr);
+    gtk_widget_override_background_color(c, GTK_STATE_FLAG_SELECTED, ptr);
+    gtk_widget_override_background_color(c, GTK_STATE_FLAG_INSENSITIVE, ptr);
+    gtk_widget_override_background_color(c, GTK_STATE_FLAG_INCONSISTENT, ptr);
+    gtk_widget_override_background_color(c, GTK_STATE_FLAG_FOCUSED, ptr);
+    gtk_widget_override_background_color(c, GTK_STATE_FLAG_BACKDROP, ptr);
+    gtk_widget_override_background_color(c, GTK_STATE_FLAG_DIR_LTR, ptr);
+    gtk_widget_override_background_color(c, GTK_STATE_FLAG_DIR_RTL, ptr);
+    gtk_widget_override_background_color(c, GTK_STATE_FLAG_LINK, ptr);
+    gtk_widget_override_background_color(c, GTK_STATE_FLAG_VISITED, ptr);
+    gtk_widget_override_background_color(c, GTK_STATE_FLAG_CHECKED, ptr);
+    gtk_widget_override_background_color(c, GTK_STATE_FLAG_DROP_ACTIVE, ptr);
 }
 
 extern "C" fn webview_context_menu_cb(

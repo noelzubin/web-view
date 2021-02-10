@@ -13,7 +13,7 @@ fn main() {
     let counter = Arc::new(Mutex::new(0));
 
     let counter_inner = counter.clone();
-    let webview = web_view::builder()
+    let mut webview = web_view::builder()
         .title("Timer example")
         .content(Content::Html(HTML))
         .size(800, 600)
@@ -52,6 +52,13 @@ fn main() {
                 .unwrap();
         }
         thread::sleep(Duration::from_secs(1));
+    });
+
+    webview.set_color(Color{
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 0,
     });
 
     webview.run().unwrap();
